@@ -1,0 +1,14 @@
+{
+  "name": "djinndev/simple-mvc",
+  "description": "A simple MVC framework build for PHP.",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+	{
+	  "name": "Trevor Geene",
+	  "email": "trevor.geene@gmail.com"
+	}
+  ],
+  "require": {
+  }
+}
