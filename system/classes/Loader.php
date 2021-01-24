@@ -14,6 +14,11 @@ class Loader
 	private object $_ref;
 
 	/**
+	 * @var array Handles data for views.
+	 */
+	private static array $_data;
+
+	/**
 	 * Loader constructor.
 	 *
 	 * Instantiates loader reference to `$this`.
@@ -95,12 +100,14 @@ class Loader
 	{
 		if(!empty($data))
 		{
-			extract($data);
+			Loader::$_data = $data;
 		}
+
+		extract(Loader::$_data);
 
 		if(!file_exists(APP_PATH . '/views/' . $viewName . '.php'))
 		{
-			throw new Exception('View requested does not exist.');
+			throw new Exception('View (' . $viewName . ') requested does not exist.');
 		}
 		else
 		{
