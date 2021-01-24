@@ -35,7 +35,15 @@ class Loader
 	 */
 	public function library(string $libraryName) : object
 	{
-		if(!property_exists($this->_ref, $libraryName) && file_exists(APP_PATH . '/libraries/' . $libraryName . '.php'))
+		if(property_exists($this->_ref, $libraryName))
+		{
+			throw new Exception('Library already loaded in current instance.');
+		}
+		elseif(!file_exists(APP_PATH . '/libraries/' . $libraryName . '.php'))
+		{
+			throw new Exception('Library requested does not exist.');
+		}
+		else
 		{
 			require APP_PATH . '/libraries/' . $libraryName . '.php';
 			$this->_ref->$libraryName = new $libraryName($this->_ref);
@@ -54,7 +62,15 @@ class Loader
 	 */
 	public function model(string $modelName) : object
 	{
-		if(!property_exists($this->_ref, $modelName) && file_exists(APP_PATH . '/models/' . $modelName . '.php'))
+		if(property_exists($this->_ref, $modelName))
+		{
+			throw new Exception('Model already loaded in current instance.');
+		}
+		elseif(!file_exists(APP_PATH . '/models/' . $modelName . '.php'))
+		{
+			throw new Exception('Model requested does not exist.');
+		}
+		else
 		{
 			require APP_PATH . '/models/' . $modelName . '.php';
 			$this->_ref->$modelName = new $modelName($this->_ref);
@@ -69,9 +85,17 @@ class Loader
 	 * Require necessary file.
 	 *
 	 * @param string $viewName
+	 * @return void
 	 */
 	public function view(string $viewName)
 	{
-		require APP_PATH . '/views/' . $viewName . '.php';
+		if(!file_exists(APP_PATH . '/views/' . $viewName . '.php'))
+		{
+			throw new Exception('View requested does not exist.');
+		}
+		else
+		{
+			require APP_PATH . '/views/' . $viewName . '.php';
+		}
 	}
 }
