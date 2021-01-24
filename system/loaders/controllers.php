@@ -8,7 +8,7 @@ if(!isset($routes) || empty($routes))
 // Set Pathing
 $variables = [];
 $methodName = 'index';
-$url = $_SERVER['REQUEST_URI'];
+$url = rtrim($_SERVER['REQUEST_URI'], '/');
 if($url == '/')
 {
 	// Load Default Controller
