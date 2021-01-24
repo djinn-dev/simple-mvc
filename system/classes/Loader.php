@@ -69,18 +69,19 @@ class Loader
 	 */
 	public function model(string $modelName) : object
 	{
+		$className = ucfirst($modelName);
 		if(property_exists($this->_ref, $modelName))
 		{
 			throw new Exception('Model already loaded in current instance.');
 		}
-		elseif(!file_exists(APP_PATH . '/models/' . $modelName . '.php'))
+		elseif(!file_exists(APP_PATH . '/models/' . $className . '.php'))
 		{
 			throw new Exception('Model requested does not exist.');
 		}
 		else
 		{
-			require APP_PATH . '/models/' . $modelName . '.php';
-			$this->_ref->$modelName = new $modelName($this->_ref);
+			require APP_PATH . '/models/' . $className . '.php';
+			$this->_ref->$modelName = new $className($this->_ref);
 		}
 
 		return $this->_ref;
