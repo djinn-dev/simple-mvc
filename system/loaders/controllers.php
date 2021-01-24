@@ -8,8 +8,8 @@ if(!isset($routes) || empty($routes))
 // Set Pathing
 $variables = [];
 $methodName = 'index';
-$url = rtrim($_SERVER['REQUEST_URI'], '/');
-if($url == '/')
+$uri = getUri();
+if($uri == '')
 {
 	// Load Default Controller
 	$className = ucfirst($routes['default_controller']);
@@ -28,29 +28,29 @@ else
 		foreach($routes as $key => $val)
 		{
 			$regex = strtr(str_replace('/', '\/', $key), $replacements);
-			if(preg_match('/' . $regex . '/', $url))
+			if(preg_match('/' . $regex . '/', $uri))
 			{
-				$url = preg_replace('/' . $regex . '/', $val, $url);
+				$uri = preg_replace('/' . $regex . '/', $val, $uri);
 				break;
 			}
 		}
 	}
 
 	// Turn URL into Usable Array
-	$path = explode('/', $url);
+	$path = explode('/', $uri);
 	$path = array_filter($path, fn($value) => !is_null($value) && $value !== '');
 
 	// Set Class Name and Handle Dashes
-	$className = ucfirst($path[1]);
+	$className = ucfirst($path[0]);
 	$className = str_replace('-', '_', $className);
-	unset($path[1]);
+	unset($path[0]);
 
-	if(isset($path[2]))
+	if(isset($path[1]))
 	{
 		// Set Method Name and Handle Dashes
-		$methodName = $path[2];
+		$methodName = $path[1];
 		$methodName = str_replace('-', '_', $methodName);
-		unset($path[2]);
+		unset($path[1]);
 
 		// Handle URL Variables
 		if(!empty($path))
