@@ -33,7 +33,7 @@ class Loader
 	 * @param string $libraryName
 	 * @return object
 	 */
-	public function library(string $libraryName = '') : object
+	public function library(string $libraryName) : object
 	{
 		if(!property_exists($this->_ref, $libraryName) && file_exists(APP_PATH . '/libraries/' . $libraryName . '.php'))
 		{
@@ -52,7 +52,7 @@ class Loader
 	 * @param string $modelName
 	 * @return object
 	 */
-	public function model(string $modelName = '') : object
+	public function model(string $modelName) : object
 	{
 		if(!property_exists($this->_ref, $modelName) && file_exists(APP_PATH . '/models/' . $modelName . '.php'))
 		{
@@ -70,7 +70,7 @@ class Loader
 	 *
 	 * @param string $viewName
 	 */
-	public function view(string $viewName = '')
+	public function view(string $viewName)
 	{
 		require APP_PATH . '/views/' . $viewName . '.php';
 	}
