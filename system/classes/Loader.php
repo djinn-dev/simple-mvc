@@ -16,7 +16,7 @@ class Loader
 	/**
 	 * @var array Handles data for views.
 	 */
-	private static array $_data;
+	private static array $_data = [];
 
 	/**
 	 * Loader constructor.
