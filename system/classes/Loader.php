@@ -32,6 +32,7 @@ class Loader
 	 *
 	 * @param string $libraryName
 	 * @return object
+	 * @throws Exception
 	 */
 	public function library(string $libraryName) : object
 	{
@@ -59,6 +60,7 @@ class Loader
 	 *
 	 * @param string $modelName
 	 * @return object
+	 * @throws Exception
 	 */
 	public function model(string $modelName) : object
 	{
@@ -85,7 +87,9 @@ class Loader
 	 * Require necessary file.
 	 *
 	 * @param string $viewName
+	 * @param array $data
 	 * @return void
+	 * @throws Exception
 	 */
 	public function view(string $viewName, array $data = [])
 	{
