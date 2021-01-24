@@ -35,18 +35,10 @@ class Loader
 	 */
 	public function library(string $libraryName = '') : object
 	{
-		if(!property_exists($this->_ref, $libraryName))
+		if(!property_exists($this->_ref, $libraryName) && file_exists(APP_PATH . '/libraries/' . $libraryName . '.php'))
 		{
-			if(file_exists(SYSTEM_PATH . '/libraries/' . $libraryName . '.php'))
-			{
-				require SYSTEM_PATH . '/libraries/' . $libraryName . '.php';
-				$this->_ref->$libraryName = new $libraryName($this->_ref);
-			}
-			elseif(file_exists(APP_PATH . '/libraries/' . $libraryName . '.php'))
-			{
-				require APP_PATH . '/libraries/' . $libraryName . '.php';
-				$this->_ref->$libraryName = new $libraryName($this->_ref);
-			}
+			require APP_PATH . '/libraries/' . $libraryName . '.php';
+			$this->_ref->$libraryName = new $libraryName($this->_ref);
 		}
 
 		return $this->_ref;
