@@ -87,8 +87,13 @@ class Loader
 	 * @param string $viewName
 	 * @return void
 	 */
-	public function view(string $viewName)
+	public function view(string $viewName, array $data = [])
 	{
+		if(!empty($data))
+		{
+			extract($data);
+		}
+
 		if(!file_exists(APP_PATH . '/views/' . $viewName . '.php'))
 		{
 			throw new Exception('View requested does not exist.');
