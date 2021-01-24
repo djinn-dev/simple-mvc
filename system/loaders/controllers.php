@@ -16,19 +16,35 @@ if($uri == '')
 }
 else
 {
+	$replacements = [
+		'(:any)' => '([a-zA-Z0-9_-]+)',
+		'(:num)' => '([0-9]+)',
+		'(:alpha)' => '([a-zA-Z_-]+)',
+	];
+
+	// Handle Redirects
+	if(!empty($redirects))
+	{
+		foreach($redirects as $key => $val)
+		{
+			$regex = strtr(str_replace('/', '\/', $key), $replacements);
+			if(preg_match('/^' . $regex . '$/', $uri))
+			{
+				header("HTTP/1.1 301 Moved Permanently");
+				header("Location: " . siteUrl($val));
+				exit;
+			}
+		}
+	}
+
 	// Handle Custom/Wildcard Routes
 	unset($routes['default_controller']);
 	if(!empty($routes))
 	{
-		$replacements = [
-			'(:any)' => '([a-zA-Z0-9_-]+)',
-			'(:num)' => '([0-9]+)',
-			'(:alpha)' => '([a-zA-Z_-]+)',
-		];
 		foreach($routes as $key => $val)
 		{
 			$regex = strtr(str_replace('/', '\/', $key), $replacements);
-			if(preg_match('/' . $regex . '/', $uri))
+			if(preg_match('/^' . $regex . '$/', $uri))
 			{
 				$uri = preg_replace('/' . $regex . '/', $val, $uri);
 				break;
