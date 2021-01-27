@@ -9,7 +9,14 @@ if(!function_exists('getUri'))
 	 */
 	function getUri() : string
 	{
-		$uri = trim($_SERVER['REQUEST_URI'], '/');
+		global $siteDetails;
+
+		$root = preg_replace('/(http|https)\:\/\/[\w]+([^\/].?([\w]+)){1,}/',
+					'',
+					$siteDetails['rootUrl']);
+		$request = str_replace($root, '', $_SERVER['REQUEST_URI']);
+
+		$uri = trim($request, '/');
 		$uriSplit = explode('?', $uri);
 
 		return $uriSplit[0];
@@ -18,6 +25,12 @@ if(!function_exists('getUri'))
 
 if(!function_exists('getUriPart'))
 {
+	/**
+	 * Get a specific part of the URI
+	 *
+	 * @param int $part
+	 * @return string
+	 */
 	function getUriPart(int $part): string
 	{
 		$uri = getUri();
