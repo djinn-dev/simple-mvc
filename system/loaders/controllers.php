@@ -5,9 +5,13 @@ if(!isset($routes) || empty($routes))
 	throw new Exception('Routes config array is missing/empty.');
 }
 
-// Set Pathing
-$variables = [];
+// Set Pathing Variables
 $methodName = 'index';
+$className = '';
+$filePath = APP_PATH . '/controllers/';
+$variables = [];
+
+// Set Pathing
 $uri = getUri();
 if($uri == '')
 {
@@ -38,6 +42,7 @@ else
 	}
 
 	// Handle Custom/Wildcard Routes
+	$defaultClass = ucfirst($routes['default_controller']);
 	unset($routes['default_controller']);
 	if(!empty($routes))
 	{
@@ -53,36 +58,66 @@ else
 	}
 
 	// Turn URL into Usable Array
-	$path = explode('/', $uri);
-	$path = array_filter($path, fn($value) => !is_null($value) && $value !== '');
+	$urlParts = explode('/', $uri);
+	$urlParts = array_filter($urlParts, fn($value) => !is_null($value) && $value !== '');
 
-	// Set Class Name and Handle Dashes
-	$className = ucfirst($path[0]);
-	$className = str_replace('-', '_', $className);
-	unset($path[0]);
-
-	if(isset($path[1]))
+	// Set Class Name/Path & Method Name
+	foreach($urlParts as $key => $part)
 	{
-		// Set Method Name and Handle Dashes
-		$methodName = $path[1];
-		$methodName = str_replace('-', '_', $methodName);
-		unset($path[1]);
+		// Handle Dashes
+		$part = str_replace('-', '_', $part);
 
-		// Handle URL Variables
-		if(!empty($path))
+		// Check for Files
+		$nextKey = $key + 1;
+		if(isset($urlParts[$nextKey]) && file_exists($filePath . $part . '/' . ucfirst($urlParts[$nextKey]) . '.php'))
 		{
-			$variables = array_values($path);
+			$className = ucfirst($urlParts[$nextKey]);
+			$filePath .= $part . '/';
+			$nextKey += 1;
 		}
+		elseif(file_exists($filePath . ucfirst($part) . '.php'))
+		{
+			$className = ucfirst($part);
+		}
+		elseif(file_exists($filePath . $part . '/' . $defaultClass . '.php'))
+		{
+			$className = $defaultClass;
+			$filePath .= $part . '/';
+		}
+		unset($urlParts[$key]);
+
+		// Check if Class FOund
+		if($className)
+		{
+			if(isset($urlParts[$nextKey]))
+			{
+				// Set Method Name and Handle Dashes
+				$methodName = $urlParts[$nextKey];
+				$methodName = str_replace('-', '_', $methodName);
+				unset($urlParts[$nextKey]);
+
+				// Handle URL Variables
+				if(!empty($urlParts))
+				{
+					$variables = array_values($urlParts);
+				}
+			}
+
+			// Leave loop
+			break;
+		}
+
+		// Concatenate path before next loop
+		$filePath .= $part . '/';
 	}
 }
 
 // Load Controller
-$filename = APP_PATH . '/controllers/' . $className . '.php';
-if(!file_exists($filename))
+if(!$className)
 {
 	throw new Exception('Route does not exist. Please check your URL and try again.');
 }
-require_once $filename;
+require_once $filePath . $className . '.php';
 
 // Run Controller
 $route = new $className();
