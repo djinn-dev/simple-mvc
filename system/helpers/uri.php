@@ -11,11 +11,20 @@ if(!function_exists('getUri'))
 	{
 		global $siteDetails;
 
-		$root = preg_replace('/(http|https)\:\/\/[\w]+([^\/].?([\w]+)){1,}/',
+		// Remove Domain from rootURL
+		$path = preg_replace('/(http|https)\:\/\/[\w]+([^\/].?([\w]+)){1,}/',
 							 '',
 							 $siteDetails['rootUrl']);
-		$request = str_replace($root, '', $_SERVER['REQUEST_URI']);
 
+		$request = $_SERVER['REQUEST_URI'];
+
+		// Remove Site Path from URI
+		if($path !== '/')
+		{
+			$request = str_replace($path, '', $_SERVER['REQUEST_URI']);
+		}
+
+		// Clean URI
 		$uri = trim($request, '/');
 		$uriSplit = explode('?', $uri);
 
@@ -33,14 +42,19 @@ if(!function_exists('getUriPart'))
 	 */
 	function getUriPart(int $part): string
 	{
+		// Get Handled URI
 		$uri = getUri();
+
+		// Separate URI into Parts
 		$uriParts = explode('/', $uri);
 
+		// Return Requested Part
 		if(isset($uriParts[$part]))
 		{
 			return $uriParts[$part];
 		}
 
+		// Default if Nothing Found
 		return '';
 	}
 }
